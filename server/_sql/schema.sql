@@ -72,6 +72,51 @@ CREATE TABLE boards (
   FOREIGN KEY (low_card_id) REFERENCES cards(id)
 );
 
+-- check_board はボードのカード順序が正しくセットされているかを確認するトリガープロシージャを表す。
+CREATE FUNCTION check_board() RETURNS trigger AS $check_boards$
+  DECLARE
+    high_card_num_value SMALLINT;
+    high_card_suit_value SMALLINT;
+    middle_card_num_value SMALLINT;
+    middle_card_suit_value SMALLINT;
+    low_card_num_value SMALLINT;
+    low_card_suit_value SMALLINT;
+  BEGIN
+    SELECT high_card_num.value, high_card_suit.value, middle_card_num.value, middle_card_suit.value, low_card_num.value, low_card_suit.value
+      INTO high_card_num_value, high_card_suit_value, middle_card_num_value, middle_card_suit_value, low_card_num_value, low_card_suit_value
+      FROM (SELECT NEW.*) board
+      INNER JOIN cards AS high_card ON board.high_card_id = high_card.id
+      INNER JOIN card_numbers AS high_card_num ON high_card.card_number_id = high_card_num.id
+      INNER JOIN card_suits AS high_card_suit ON high_card.card_suit_id = high_card_suit.id
+      INNER JOIN cards AS middle_card ON board.middle_card_id = middle_card.id
+      INNER JOIN card_numbers AS middle_card_num ON middle_card.card_number_id = middle_card_num.id
+      INNER JOIN card_suits AS middle_card_suit ON middle_card.card_suit_id = middle_card_suit.id
+      INNER JOIN cards AS low_card ON board.low_card_id = low_card.id
+      INNER JOIN card_numbers AS low_card_num ON low_card.card_number_id = low_card_num.id
+      INNER JOIN card_suits AS low_card_suit ON low_card.card_suit_id = low_card_suit.id;
+
+    IF (high_card_num_value < middle_card_num_value) THEN
+      RAISE EXCEPTION 'The card number order is invalid. The middle card should be smaller or equal than the high card. high_card_num_value: %, middle_card_num_value: %', high_card_num_value, middle_card_num_value;
+    END IF;
+    IF (high_card_num_value = middle_card_num_value AND high_card_suit_value < middle_card_suit_value) THEN
+      RAISE EXCEPTION 'The card suit order is invalid. The middle card should be smaller or equal than the high card. high_card_suit_value: %, middle_card_suit_value: %', high_card_suit_value, middle_card_suit_value;
+    END IF;
+
+    IF (middle_card_num_value < low_card_num_value) THEN
+      RAISE EXCEPTION 'The card number order is invalid. The low card should be smaller or equal than the middle card. middle_card_num_value: %, low_card_num_value: %', middle_card_num_value, low_card_num_value;
+    END IF;
+    IF (middle_card_num_value = low_card_num_value AND middle_card_suit_value < low_card_suit_value) THEN
+      RAISE EXCEPTION 'The card suit order is invalid. The low card should be smaller or equal than the middle card. middle_card_suit_value: %, low_card_suit_value: %', middle_card_suit_value, low_card_suit_value;
+    END IF;
+
+    RETURN NEW;
+  END;
+$check_boards$ LANGUAGE plpgsql;
+
+-- check_boards はボードのカード順序が正しくセットされているかを確認するトリガーを表す。
+CREATE TRIGGER check_board BEFORE INSERT OR UPDATE ON boards
+  FOR EACH ROW EXECUTE PROCEDURE check_board();
+
 -- player_positions はプレイヤーのポジションを表す。
 CREATE TABLE player_positions (
   -- id はポジションの ID を表す。
@@ -118,6 +163,30 @@ CREATE TABLE heads_up_situations (
   FOREIGN KEY (in_position_id) REFERENCES player_positions(id),
   FOREIGN KEY (out_of_position_id) REFERENCES player_positions(id)
 );
+
+-- check_heads_up_situation はヘッズアップシチュエーションのプレイヤーポジション順序が正しくセットされているかを確認するトリガープロシージャを表す。
+CREATE FUNCTION check_heads_up_situation() RETURNS trigger AS $check_heads_up_situation$
+  DECLARE
+    ip_order SMALLINT;
+    oop_order SMALLINT;
+  BEGIN
+    SELECT ip.post_flop_action_order, oop.post_flop_action_order
+      INTO ip_order, oop_order
+      FROM (SELECT NEW.*) heads_up
+      INNER JOIN player_positions AS ip ON heads_up.in_position_id = ip.id
+      INNER JOIN player_positions AS oop ON heads_up.out_of_position_id = oop.id;
+
+    IF (ip_order < oop_order) THEN
+      RAISE EXCEPTION 'The player position order is invalid. OOP player must come before IP player. ip_order: %, oop_order: %', ip_order, oop_order;
+    END IF;
+
+    RETURN NEW;
+  END;
+$check_heads_up_situation$ LANGUAGE plpgsql;
+
+-- check_heads_up_situation はヘッズアップシチュエーションのプレイヤーポジション順序が正しくセットされているかを確認するトリガーを表す。
+CREATE TRIGGER check_heads_up_situation BEFORE INSERT OR UPDATE ON heads_up_situations
+  FOR EACH ROW EXECUTE PROCEDURE check_heads_up_situation();
 
 -- flop_situations はフロップのシチュエーションを表す。
 -- cardinality: flop_situations-boards=1-1
