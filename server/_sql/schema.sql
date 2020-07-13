@@ -233,6 +233,27 @@ CREATE TABLE flop_situation_parameters (
   out_of_position_67_bet_frequency real NOT NULL,
   -- in_position_67_bet_frequency はアウトオブポジションの 67% ベットの頻度を表す。
   in_position_67_bet_frequency real NOT NULL,
+  -- created_at は作成時刻を表す。
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  -- updated_at は更新時刻を表す。
+  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  PRIMARY KEY (flop_situations_id),
+  FOREIGN KEY (flop_situations_id) REFERENCES flop_situations(id)
+);
+
+-- flop_situation_images はフロップシチュエーションの画像を表す。
+-- cardinality: flop_situations-flop_situation_images=1-1
+CREATE TABLE flop_situation_images (
+  -- flop_situations_id はフロップシチュエーションの ID を表す。
+  flop_situations_id uuid NOT NULL,
+  -- url は画像の URL を表す。
+  url VARCHAR(1000) NOT NULL CHECK(url <> ''),
+  -- description は画像の説明文を表す。（説明文がない場合は空文字が入る想定。）
+  description VARCHAR(3000) NOT NULL,
+  -- created_at は作成時刻を表す。
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+  -- updated_at は更新時刻を表す。
+  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   PRIMARY KEY (flop_situations_id),
   FOREIGN KEY (flop_situations_id) REFERENCES flop_situations(id)
 );

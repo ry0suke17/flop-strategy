@@ -1,0 +1,179 @@
+openapi: 3.0.2
+info:
+  version: 1.0.0
+  title: flop-strategy
+servers:
+  - url: 'http://localhost:8080'
+    description: Local server
+paths:
+  '/flop/situations/parameter':
+    get:
+      summary: Get parameter for flop situations
+      operationId: GetFlopSituationsParameter
+      tags:
+        - flopStrategy
+      parameters:
+        - $ref: '#/components/parameters/HeroPosition'
+        - $ref: '#/components/parameters/VillainPosition'
+        - $ref: '#/components/parameters/PotType'
+        - $ref: '#/components/parameters/HighCard'
+        - $ref: '#/components/parameters/BoardPairedType'
+        - $ref: '#/components/parameters/BoardSuitsType'
+      responses:
+        '200':
+          description: Parameter for flop situations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetFlopSituationsParameterResponse'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    GetFlopSituationsParameterResponse:
+      required:
+        - ip_bet_freq
+        - oop_bet_freq
+        - ip_check_freq
+        - oop_check_freq
+        - ip_33_bet_freq
+        - oop_33_bet_freq
+        - ip_67_bet_freq
+        - oop_67_bet_freq
+        - ip_equity
+        - oop_equity
+        - hero_position_type
+      properties:
+        ip_bet_freq:
+          type: number
+          format: float
+        oop_bet_freq:
+          type: number
+          format: float
+        ip_check_freq:
+          type: number
+          format: float
+        oop_check_freq:
+          type: number
+          format: float
+        ip_33_bet_freq:
+          type: number
+          format: float
+        oop_33_bet_freq:
+          type: number
+          format: float
+        ip_67_bet_freq:
+          type: number
+          format: float
+        oop_67_bet_freq:
+          type: number
+          format: float
+        ip_equity:
+          type: number
+          format: float
+        oop_equity:
+          type: number
+          format: float
+        hero_position_type:
+          $ref: '#/components/schemas/PlayerPositionType'
+        image_urls:
+          type: array
+          items:
+            type: string
+            format: uri
+        description:
+          type: string
+    PlayerPosition:
+      type: string
+      enum:
+        - SB
+        - BB
+        - UTG
+        - HJ
+        - CO
+        - BTN
+    PlayerPositionType:
+      type: string
+      enum:
+        - IN_POSITION
+        - OUT_OF_POSITION
+    PotType:
+      type: string
+      enum:
+        - SRP
+        - 3BET
+        - 4BET
+    HighCard:
+      type: string
+      enum:
+        - A
+        - K
+        - Q
+        - J
+        - T
+        - 8_to_9
+        - 5_to_7
+        - 2_to_4
+    BoardPairedType:
+      type: string
+      enum:
+        - UNPAIRED
+        - PAIRED
+        - TRIPS
+    BoardSuitsType:
+      type: string
+      enum:
+        - MONO_TONE
+        - TWO_TONE
+        - RAINBOW
+    Error:
+      properties:
+        code:
+          type: string
+          description: |
+            You can spot the error cause in detail by checking this code.
+
+            * `INVALID_ARGUMENT` - The arguments is invalid
+          enum:
+            - INVALID_ARGUMENT
+        message:
+          description: A developer-facing error message.
+          type: string
+        localized_message:
+          description: A user-friendly error message.
+          type: string
+  parameters:
+    HeroPosition:
+      name: hero-position
+      in: query
+      schema:
+        $ref: '#/components/schemas/PlayerPosition'
+    VillainPosition:
+      name: villain-position
+      in: query
+      schema:
+        $ref: '#/components/schemas/PlayerPosition'
+    PotType:
+      name: pot-type
+      in: query
+      schema:
+        $ref: '#/components/schemas/PotType'
+    HighCard:
+      name: high-card
+      in: query
+      schema:
+        $ref: '#/components/schemas/HighCard'
+    BoardPairedType:
+      name: board-paired-type
+      in: query
+      schema:
+        $ref: '#/components/schemas/BoardPairedType'
+    BoardSuitsType:
+      name: board-suits-type
+      in: query
+      schema:
+        $ref: '#/components/schemas/BoardSuitsType'
