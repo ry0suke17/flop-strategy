@@ -1,0 +1,10 @@
+version: '3'
+services:
+  postgresql:
+    image: "postgres:12-alpine"
+    ports:
+      - "5432:5432"
+    volumes:
+      - ~/docker/volumes/postgres_flop-strategy:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: docker
