@@ -14,7 +14,8 @@ dev/compose:
 
 ## dev/postgres/setup は Postgres のセットアップを行う。
 dev/postgres/setup: \
-	dev/postgres/create/schema
+	dev/postgres/create/schema \
+	dev/postgres/seeding
 
 ## DEV_POSTGRES_ROOT_PASSWORD は Postgres root のパスワードを表す。
 DEV_POSTGRES_ROOT_PASSWORD=docker
@@ -29,15 +30,21 @@ DEV_POSTGRES_DATABASE=flop-strategy
 dev/postgres/wait:
 	sleep 10
 
-## dev/postgres/create/schema は Postgres デーベーススキーマを作成する。
+## dev/postgres/create/schema は Postgres データベーススキーマを作成する。
 dev/postgres/create/schema:
 	PGPASSWORD=$(DEV_POSTGRES_ROOT_PASSWORD) createdb $(DEV_POSTGRES_DATABASE) -U postgres -h localhost -p $(DEV_POSTGRES_PORT)
 	PGPASSWORD=$(DEV_POSTGRES_ROOT_PASSWORD) psql -d $(DEV_POSTGRES_DATABASE) -U postgres -h localhost -p $(DEV_POSTGRES_PORT) -f _sql/schema.sql
 
-## dev/postgres/recreate/schema は Postgres デーベーススキーマを再作成する。
+## dev/postgres/recreate/schema は Postgres データベーススキーマを再作成する。
 dev/postgres/recreate/schema:
 	PGPASSWORD=$(DEV_POSTGRES_ROOT_PASSWORD) dropdb $(DEV_POSTGRES_DATABASE) -U postgres -h localhost -p $(DEV_POSTGRES_PORT) --if-exists
 	make dev/postgres/create/schema
+
+## dev/postgres/seeding は Postgres データベースに初期データを挿入する。
+dev/postgres/seeding:
+	PGPASSWORD=$(DEV_POSTGRES_ROOT_PASSWORD) psql -d $(DEV_POSTGRES_DATABASE) -U postgres -h localhost -p $(DEV_POSTGRES_PORT) -f _sql/boards.sql
+	PGPASSWORD=$(DEV_POSTGRES_ROOT_PASSWORD) psql -d $(DEV_POSTGRES_DATABASE) -U postgres -h localhost -p $(DEV_POSTGRES_PORT) -f _sql/heads_up_situations.sql
+	PGPASSWORD=$(DEV_POSTGRES_ROOT_PASSWORD) psql -d $(DEV_POSTGRES_DATABASE) -U postgres -h localhost -p $(DEV_POSTGRES_PORT) -f _sql/flop_situations.sql
 
 # ------------------------------------------------------------------
 # ------------------------------------------------------------------
