@@ -26,6 +26,9 @@ DEV_POSTGRES_PORT=5432
 ## DEV_POSTGRES_DATABASE は Postgres データベース名を表す。
 DEV_POSTGRES_DATABASE=flop-strategy
 
+## DEV_CANO_POSTGRES_SOURCE_NAME は開発時に起動する PostgreSQL データソース名を表す。
+DEV_CANO_POSTGRES_SOURCE_NAME=user=postgres dbname=flop-strategy password=docker sslmode=disable
+
 ## dev/postgres/wait は Postgres サーバーの起動を待つ。
 dev/postgres/wait:
 	sleep 10
@@ -45,6 +48,11 @@ dev/postgres/seeding:
 	PGPASSWORD=$(DEV_POSTGRES_ROOT_PASSWORD) psql -d $(DEV_POSTGRES_DATABASE) -U postgres -h localhost -p $(DEV_POSTGRES_PORT) -f _sql/boards.sql
 	PGPASSWORD=$(DEV_POSTGRES_ROOT_PASSWORD) psql -d $(DEV_POSTGRES_DATABASE) -U postgres -h localhost -p $(DEV_POSTGRES_PORT) -f _sql/heads_up_situations.sql
 	PGPASSWORD=$(DEV_POSTGRES_ROOT_PASSWORD) psql -d $(DEV_POSTGRES_DATABASE) -U postgres -h localhost -p $(DEV_POSTGRES_PORT) -f _sql/flop_situations.sql
+
+## dev/api は API サーバーを立ち上げる。
+dev/api:
+	go run cmd/server/api/main.go \
+		-postgres_source_name "$(DEV_CANO_POSTGRES_SOURCE_NAME)"
 
 # ------------------------------------------------------------------
 # ------------------------------------------------------------------
