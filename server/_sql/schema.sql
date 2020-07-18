@@ -1,3 +1,6 @@
+-- 一部コメントの独自記法について説明する。
+-- -- cardinality: は外部キーで関連しているテーブル間の多重度を表す。外部キーを持つテーブルの場合は必須。
+
 -- card_numbers はカードの番号を表す。
 CREATE TABLE card_numbers (
   -- id はカード番号の ID を表す。
@@ -211,8 +214,8 @@ CREATE TABLE flop_situations (
 -- flop_situation_parameters はフロップシチュエーションのパラメータを表す。
 -- cardinality: flop_situations-flop_situation_parameters=1-1
 CREATE TABLE flop_situation_parameters (
-  -- flop_situations_id はフロップシチュエーションの ID を表す。
-  flop_situations_id uuid NOT NULL,
+  -- flop_situation_id はフロップシチュエーションの ID を表す。
+  flop_situation_id uuid NOT NULL,
   -- out_of_position_bet_frequency はアウトオブポジションのベット頻度を表す。
   out_of_position_bet_frequency real NOT NULL,
   -- in_position_bet_frequency はインポジションのベット頻度を表す。
@@ -237,15 +240,15 @@ CREATE TABLE flop_situation_parameters (
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   -- updated_at は更新時刻を表す。
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-  PRIMARY KEY (flop_situations_id),
-  FOREIGN KEY (flop_situations_id) REFERENCES flop_situations(id)
+  PRIMARY KEY (flop_situation_id),
+  FOREIGN KEY (flop_situation_id) REFERENCES flop_situations(id)
 );
 
 -- flop_situation_images はフロップシチュエーションの画像を表す。
 -- cardinality: flop_situations-flop_situation_images=1-1
 CREATE TABLE flop_situation_images (
-  -- flop_situations_id はフロップシチュエーションの ID を表す。
-  flop_situations_id uuid NOT NULL,
+  -- flop_situation_id はフロップシチュエーションの ID を表す。
+  flop_situation_id uuid NOT NULL,
   -- url は画像の URL を表す。
   url VARCHAR(1000) NOT NULL CHECK(url <> ''),
   -- description は画像の説明文を表す。（説明文がない場合は空文字が入る想定。）
@@ -254,6 +257,6 @@ CREATE TABLE flop_situation_images (
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   -- updated_at は更新時刻を表す。
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-  PRIMARY KEY (flop_situations_id),
-  FOREIGN KEY (flop_situations_id) REFERENCES flop_situations(id)
+  PRIMARY KEY (flop_situation_id),
+  FOREIGN KEY (flop_situation_id) REFERENCES flop_situations(id)
 );
