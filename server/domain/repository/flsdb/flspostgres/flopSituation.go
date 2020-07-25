@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/yneee/flop-strategy/domain/flopsituationlist"
+	"github.com/yneee/flop-strategy/domain/model/flopsituationlist"
 	"github.com/yneee/flop-strategy/infra/flserr"
 )
 

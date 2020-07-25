@@ -1,16 +1,20 @@
 package main
 
 import (
-	"context"
 	"flag"
-	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"time"
 
-	"github.com/yneee/flop-strategy/app/flopsituationapp"
+	"github.com/yneee/flop-strategy/transport/server"
+
+	"github.com/yneee/flop-strategy/infra/flsopenapi"
+
+	"github.com/yneee/flop-strategy/domain/service"
+
+	"github.com/yneee/flop-strategy/domain/repository/flsdb/flspostgres"
 	"github.com/yneee/flop-strategy/infra/flserr"
-	"github.com/yneee/flop-strategy/repository/flsdb/flspostgres"
 )
 
 var (
@@ -45,20 +49,15 @@ func do() (err error) {
 	}()
 	// }
 
-	// アプリケーションを生成する {
-	flopSituationApp := flopsituationapp.NewApp(db)
+	// サービスを生成する {
+	flopStrtategyService := service.NewFlopStrtategyService(db)
 	// }
 
-	// テスト的にデータ取得 {
-	list, err := flopSituationApp.ListFlopSituations(context.Background())
-	if err != nil {
-		log.Printf("err=%v\n", err)
-		os.Exit(1)
-	}
-	fmt.Println(list)
+	// サーバーを起動する {
+	flopStrtategyServer := server.NewFlopStrategyServer(flopStrtategyService)
+	router := flsopenapi.NewRouter(flopStrtategyServer)
+	return http.ListenAndServe(":8080", router)
 	// }
-
-	return nil
 }
 
 func main() {
