@@ -2,6 +2,15 @@
 # ------------------------------------------------------------------
 # ------------------------------------------------------------------
 
+## dev/fmt は強制的に適切なコードに書き変える。
+dev/fmt:
+	# goimports で書き換える。
+	goimports -w `find . -name vendor -prune -type f -o -name '*.go'`
+	# gofmt のコードフォーマットに書き換えた上で、よりシンプルに書けるコードを書き換える。
+	gofmt -s -w `find . -name vendor -prune -type f -o -name '*.go'`
+	# 不要な型変換を取り除く。
+	unconvert -apply ./...
+
 ## dev/setup は初回の開発に必要なセットアップを行う
 dev/setup: \
 	dev/compose \
@@ -53,6 +62,49 @@ dev/postgres/seeding:
 dev/api:
 	go run cmd/server/api/main.go \
 		-postgres_source_name "$(DEV_CANO_POSTGRES_SOURCE_NAME)"
+
+## dev/openapi/generate は API コードを生成する。
+dev/openapi/generate:
+	npx @openapitools/openapi-generator-cli generate \
+		-i ../api/flopStrategy.yaml \
+		-g go-server \
+		-o ./genopenapi \
+		--additional-properties=featureCORS=true,packageName=flsopenapi,sourceFolder=flsopenapi \
+		--global-property=models,supportingFiles,verbose=true
+	rm -rf ./infra/flsopenapi
+	cp -r ./genopenapi/flsopenapi ./infra/
+	rm -rf ./genopenapi
+	make dev/fmt
+
+# ------------------------------------------------------------------
+# ------------------------------------------------------------------
+# }
+
+# テストで利用するコマンド {
+# ------------------------------------------------------------------
+# ------------------------------------------------------------------
+
+## test/lint は linter を実行する。
+## TODO: folint などで flsopenapi をとりあえず除外してるのでもっといい方法で除外してあげた方がいい。（エディタ側の golint は除外されていない）
+test/lint:
+	# コーディングスタイルの問題をチェックする
+	(! gofmt -s -d `find . -name vendor -prune -type f -o -name '*.go'` | grep '^')
+	# コーディングスタイルの問題をチェックする
+	golint -set_exit_status `go list ./... | grep -v flsopenapi`
+	# import 文のフォーマットをチェックする
+	(! goimports -l `find . -name vendor -prune -type f -o -name '*.go'` | grep 'go')
+	# コンパイラが検出しないエラーをチェックする。
+	go vet ./...
+	# shadowed 変数をチェックする。
+	go vet -vettool=$(which shadow) ./...
+	# 関数のエラー戻り値をハンドリングしているかをチェックする。
+	errcheck `go list ./... | grep -v flsopenapi`
+	# 未使用のグローバル変数と定数がないかチェックする。
+	varcheck ./...
+	# 代入した値を無視していないかチェックする
+	ineffassign .
+	# 不要な型変換をしていないかチェックする。
+	unconvert -v ./...
 
 # ------------------------------------------------------------------
 # ------------------------------------------------------------------

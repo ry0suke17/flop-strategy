@@ -90,46 +90,46 @@ components:
     PlayerPosition:
       type: string
       enum:
-        - SB
-        - BB
-        - UTG
-        - HJ
-        - CO
-        - BTN
+        - PlayerPositionSB
+        - PlayerPositionBB
+        - PlayerPositionUTG
+        - PlayerPositionHJ
+        - PlayerPositionCO
+        - PlayerPositionBTN
     PlayerPositionType:
       type: string
       enum:
-        - IN_POSITION
-        - OUT_OF_POSITION
+        - PlayerPositionTypeInPosition
+        - PlayerPositionTypeOutOfPosition
     PotType:
       type: string
       enum:
-        - SRP
-        - 3BET
-        - 4BET
+        - PotTypeSRP
+        - PotType_3_Bet
+        - PotType_4_Bet
     HighCard:
       type: string
       enum:
-        - A
-        - K
-        - Q
-        - J
-        - T
-        - 8_to_9
-        - 5_to_7
-        - 2_to_4
+        - HighCardA
+        - HighCardK
+        - HighCardQ
+        - HighCardJ
+        - HighCardT
+        - HighCard_8_To_9
+        - HighCard_5_To_7
+        - HighCard_2_To_4
     BoardPairedType:
       type: string
       enum:
-        - UNPAIRED
-        - PAIRED
-        - TRIPS
+        - BoardPairedTypeUnpaired
+        - BoardPairedTypePaired
+        - BoardPairedTypeTrips
     BoardSuitsType:
       type: string
       enum:
-        - MONO_TONE
-        - TWO_TONE
-        - RAINBOW
+        - BoardSuitsTypeMonoTone
+        - BoardSuitsTypeTwoTone
+        - BoardSuitsTypeRainbow
     Error:
       properties:
         code:
@@ -139,7 +139,7 @@ components:
 
             * `INVALID_ARGUMENT` - The arguments is invalid
           enum:
-            - INVALID_ARGUMENT
+            - CodeInvalidArgument
         message:
           description: A developer-facing error message.
           type: string
