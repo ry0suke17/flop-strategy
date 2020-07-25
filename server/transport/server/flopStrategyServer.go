@@ -6,7 +6,7 @@ import (
 
 	"github.com/yneee/flop-strategy/domain/service"
 
-	"github.com/yneee/flop-strategy/infra/flsopenapi"
+	"github.com/yneee/flop-strategy/transport/openapi"
 )
 
 // FlopStrategyServer はフロップ戦略のサーバーを表す。
@@ -15,15 +15,15 @@ type FlopStrategyServer struct {
 }
 
 // NewFlopStrategyServer は新しいサーバーを返す。
-func NewFlopStrategyServer(s *service.FlopStrtategyService) flsopenapi.Router {
+func NewFlopStrategyServer(s *service.FlopStrtategyService) openapi.Router {
 	return &FlopStrategyServer{
 		service: s,
 	}
 }
 
 // Routes は OpenAPI の Routes の実装を表す。
-func (s *FlopStrategyServer) Routes() flsopenapi.Routes {
-	return flsopenapi.Routes{
+func (s *FlopStrategyServer) Routes() openapi.Routes {
+	return openapi.Routes{
 		{
 			Name:        "GetFlopSituationsParameter",
 			Method:      strings.ToUpper("Get"),
@@ -57,7 +57,7 @@ func (s *FlopStrategyServer) GetFlopSituationsParameter(w http.ResponseWriter, r
 		return
 	}
 
-	err = flsopenapi.EncodeJSONResponse(result, nil, w)
+	err = openapi.EncodeJSONResponse(result, nil, w)
 	if err != nil {
 		w.WriteHeader(500)
 		return

@@ -69,10 +69,10 @@ dev/openapi/generate:
 		-i ../api/flopStrategy.yaml \
 		-g go-server \
 		-o ./genopenapi \
-		--additional-properties=featureCORS=true,packageName=flsopenapi,sourceFolder=flsopenapi \
+		--additional-properties=featureCORS=true,packageName=openapi,sourceFolder=openapi \
 		--global-property=models,supportingFiles,verbose=true
-	rm -rf ./infra/flsopenapi
-	cp -r ./genopenapi/flsopenapi ./infra/
+	rm -rf ./transport/openapi
+	cp -r ./genopenapi/openapi ./transport/
 	rm -rf ./genopenapi
 	make dev/fmt
 
@@ -85,12 +85,12 @@ dev/openapi/generate:
 # ------------------------------------------------------------------
 
 ## test/lint は linter を実行する。
-## TODO: folint などで flsopenapi をとりあえず除外してるのでもっといい方法で除外してあげた方がいい。（エディタ側の golint は除外されていない）
+## TODO: folint などで openapi をとりあえず除外してるのでもっといい方法で除外してあげた方がいい。（エディタ側の golint は除外されていない）
 test/lint:
 	# コーディングスタイルの問題をチェックする
 	(! gofmt -s -d `find . -name vendor -prune -type f -o -name '*.go'` | grep '^')
 	# コーディングスタイルの問題をチェックする
-	golint -set_exit_status `go list ./... | grep -v flsopenapi`
+	golint -set_exit_status `go list ./... | grep -v transport/openapi`
 	# import 文のフォーマットをチェックする
 	(! goimports -l `find . -name vendor -prune -type f -o -name '*.go'` | grep 'go')
 	# コンパイラが検出しないエラーをチェックする。
@@ -98,7 +98,7 @@ test/lint:
 	# shadowed 変数をチェックする。
 	go vet -vettool=$(which shadow) ./...
 	# 関数のエラー戻り値をハンドリングしているかをチェックする。
-	errcheck `go list ./... | grep -v flsopenapi`
+	errcheck `go list ./... | grep -v transport/openapi`
 	# 未使用のグローバル変数と定数がないかチェックする。
 	varcheck ./...
 	# 代入した値を無視していないかチェックする
