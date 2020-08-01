@@ -69,10 +69,10 @@ dev/openapi/generate:
 		-i ../api/flopStrategy.yaml \
 		-g go-server \
 		-o ./genopenapi \
-		--additional-properties=featureCORS=true,packageName=openapi,sourceFolder=openapi \
-		--global-property=models,supportingFiles,verbose=true
-	rm -rf ./transport/openapi
-	cp -r ./genopenapi/openapi ./transport/
+		--additional-properties=featureCORS=true,packageName=api,sourceFolder=api \
+		--global-property=models,supportingFiles
+	rm -rf ./transport/openapi/api
+	cp -r ./genopenapi/api ./transport/openapi/
 	rm -rf ./genopenapi
 	make dev/fmt
 

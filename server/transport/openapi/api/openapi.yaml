@@ -1,0 +1,233 @@
+openapi: 3.0.2
+info:
+  title: flop-strategy
+  version: 1.0.0
+servers:
+- description: Local server
+  url: http://localhost:8080
+paths:
+  /flop/situations/parameter:
+    get:
+      operationId: GetFlopSituationsParameter
+      parameters:
+      - explode: true
+        in: query
+        name: hero-position
+        required: false
+        schema:
+          $ref: '#/components/schemas/PlayerPosition'
+        style: form
+      - explode: true
+        in: query
+        name: villain-position
+        required: false
+        schema:
+          $ref: '#/components/schemas/PlayerPosition'
+        style: form
+      - explode: true
+        in: query
+        name: pot-type
+        required: false
+        schema:
+          $ref: '#/components/schemas/PotType'
+        style: form
+      - explode: true
+        in: query
+        name: high-card
+        required: false
+        schema:
+          $ref: '#/components/schemas/HighCard'
+        style: form
+      - explode: true
+        in: query
+        name: board-paired-type
+        required: false
+        schema:
+          $ref: '#/components/schemas/BoardPairedType'
+        style: form
+      - explode: true
+        in: query
+        name: board-suits-type
+        required: false
+        schema:
+          $ref: '#/components/schemas/BoardSuitsType'
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetFlopSituationsParameterResponse'
+          description: Parameter for flop situations
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: unexpected error
+      summary: Get parameter for flop situations
+      tags:
+      - flopStrategy
+components:
+  parameters:
+    HeroPosition:
+      explode: true
+      in: query
+      name: hero-position
+      required: false
+      schema:
+        $ref: '#/components/schemas/PlayerPosition'
+      style: form
+    VillainPosition:
+      explode: true
+      in: query
+      name: villain-position
+      required: false
+      schema:
+        $ref: '#/components/schemas/PlayerPosition'
+      style: form
+    PotType:
+      explode: true
+      in: query
+      name: pot-type
+      required: false
+      schema:
+        $ref: '#/components/schemas/PotType'
+      style: form
+    HighCard:
+      explode: true
+      in: query
+      name: high-card
+      required: false
+      schema:
+        $ref: '#/components/schemas/HighCard'
+      style: form
+    BoardPairedType:
+      explode: true
+      in: query
+      name: board-paired-type
+      required: false
+      schema:
+        $ref: '#/components/schemas/BoardPairedType'
+      style: form
+    BoardSuitsType:
+      explode: true
+      in: query
+      name: board-suits-type
+      required: false
+      schema:
+        $ref: '#/components/schemas/BoardSuitsType'
+      style: form
+  schemas:
+    GetFlopSituationsParameterResponse:
+      properties:
+        ip_bet_freq:
+          format: float
+          type: number
+        oop_bet_freq:
+          format: float
+          type: number
+        ip_check_freq:
+          format: float
+          type: number
+        oop_check_freq:
+          format: float
+          type: number
+        ip_33_bet_freq:
+          format: float
+          type: number
+        oop_33_bet_freq:
+          format: float
+          type: number
+        ip_67_bet_freq:
+          format: float
+          type: number
+        oop_67_bet_freq:
+          format: float
+          type: number
+        ip_equity:
+          format: float
+          type: number
+        oop_equity:
+          format: float
+          type: number
+        hero_position_type:
+          $ref: '#/components/schemas/PlayerPositionType'
+        image_urls:
+          items:
+            format: uri
+            type: string
+          type: array
+        description:
+          type: string
+      required:
+      - hero_position_type
+      - ip_33_bet_freq
+      - ip_67_bet_freq
+      - ip_bet_freq
+      - ip_check_freq
+      - ip_equity
+      - oop_33_bet_freq
+      - oop_67_bet_freq
+      - oop_bet_freq
+      - oop_check_freq
+      - oop_equity
+    PlayerPosition:
+      enum:
+      - PlayerPositionSB
+      - PlayerPositionBB
+      - PlayerPositionUTG
+      - PlayerPositionHJ
+      - PlayerPositionCO
+      - PlayerPositionBTN
+      type: string
+    PlayerPositionType:
+      enum:
+      - PlayerPositionTypeInPosition
+      - PlayerPositionTypeOutOfPosition
+      type: string
+    PotType:
+      enum:
+      - PotTypeSRP
+      - PotType_3_Bet
+      - PotType_4_Bet
+      type: string
+    HighCard:
+      enum:
+      - HighCardA
+      - HighCardK
+      - HighCardQ
+      - HighCardJ
+      - HighCardT
+      - HighCard_8_To_9
+      - HighCard_5_To_7
+      - HighCard_2_To_4
+      type: string
+    BoardPairedType:
+      enum:
+      - BoardPairedTypeUnpaired
+      - BoardPairedTypePaired
+      - BoardPairedTypeTrips
+      type: string
+    BoardSuitsType:
+      enum:
+      - BoardSuitsTypeMonoTone
+      - BoardSuitsTypeTwoTone
+      - BoardSuitsTypeRainbow
+      type: string
+    Error:
+      properties:
+        code:
+          description: |
+            You can spot the error cause in detail by checking this code.
+
+            * `INVALID_ARGUMENT` - The arguments is invalid
+          enum:
+          - CodeInvalidArgument
+          type: string
+        message:
+          description: A developer-facing error message.
+          type: string
+        localized_message:
+          description: A user-friendly error message.
+          type: string
