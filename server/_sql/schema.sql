@@ -120,12 +120,28 @@ $check_boards$ LANGUAGE plpgsql;
 CREATE TRIGGER check_board BEFORE INSERT OR UPDATE ON boards
   FOR EACH ROW EXECUTE PROCEDURE check_board();
 
+-- position_type はポジションのタイプを表す。
+CREATE TYPE position_type AS ENUM (
+	-- SB は SB ポジションを表す
+	'SB',
+	-- BB は BB ポジションを表す
+	'BB',
+	-- UTG は UTG ポジションを表す
+	'UTG',
+	-- HJ は HJ ポジションを表す
+	'HJ',
+	-- CO は CO ポジションを表す
+	'CO',
+	-- BTN は BTN ポジションを表す
+	'BTN'
+);
+
 -- player_positions はプレイヤーのポジションを表す。
 CREATE TABLE player_positions (
   -- id はポジションの ID を表す。
   id uuid NOT NULL,
-  -- display_name はポジションの表示名を表す。
-  display_name VARCHAR(3) NOT NULL CHECK(display_name <> ''),
+  -- position_type はポジションのタイプを表す。
+  position_type position_type NOT NULL,
   -- post_flop_action_order はポストフロップでのアクションの順番を表す。
   post_flop_action_order SMALLINT NOT NULL CHECK(0 < post_flop_action_order AND post_flop_action_order < 7), -- 6 MAX のみを想定している。
   -- created_at は作成時刻を表す。
@@ -193,7 +209,7 @@ CREATE TRIGGER check_heads_up_situation BEFORE INSERT OR UPDATE ON heads_up_situ
 
 -- flop_situations はフロップのシチュエーションを表す。
 -- cardinality: flop_situations-boards=1-1
--- cardinality: flop_situations-player_positions=1-2
+-- cardinality: flop_situations-heads_up_situations=1-1
 CREATE TABLE flop_situations (
   -- id はフロップシチューションの ID を表す。
   id uuid NOT NULL,
