@@ -16,5 +16,5 @@ func BoardPotType(potType api.PotType) (board.PotType, error) {
 	case api.POT_TYPE_4_BET:
 		return board.PotType4Bet, nil
 	}
-	return 0, flserr.Errorf("invalid pot type. %s", potType)
+	return "", flserr.Errorf("invalid pot type. %s", potType)
 }

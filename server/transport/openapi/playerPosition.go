@@ -1,26 +1,26 @@
 package openapi
 
 import (
-	"github.com/yneee/flop-strategy/domain/model/player"
+	"github.com/yneee/flop-strategy/domain/model/playerposition"
 	"github.com/yneee/flop-strategy/infra/flserr"
 	"github.com/yneee/flop-strategy/transport/openapi/api"
 )
 
 // PlayerPostion はドメイン層のプレイヤーポジションに変換する
-func PlayerPostion(position api.PlayerPosition) (player.Position, error) {
+func PlayerPostion(position api.PlayerPosition) (playerposition.Position, error) {
 	switch position {
 	case api.PLAYER_POSITION_SB:
-		return player.PositionSB, nil
+		return playerposition.PositionSB, nil
 	case api.PLAYER_POSITION_BB:
-		return player.PositionBB, nil
+		return playerposition.PositionBB, nil
 	case api.PLAYER_POSITION_UTG:
-		return player.PositionUTG, nil
+		return playerposition.PositionUTG, nil
 	case api.PLAYER_POSITION_HJ:
-		return player.PositionHJ, nil
+		return playerposition.PositionHJ, nil
 	case api.PLAYER_POSITION_CO:
-		return player.PositionCO, nil
+		return playerposition.PositionCO, nil
 	case api.PLAYER_POSITION_BTN:
-		return player.PositionBTN, nil
+		return playerposition.PositionBTN, nil
 	}
-	return 0, flserr.Errorf("invalid player position. %s", position)
+	return "", flserr.Errorf("invalid player position. %s", position)
 }

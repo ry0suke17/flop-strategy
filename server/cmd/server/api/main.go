@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/yneee/flop-strategy/transport/openapi"
+	"github.com/yneee/flop-strategy/transport/openapi/api"
 	"github.com/yneee/flop-strategy/transport/server"
 
 	"github.com/yneee/flop-strategy/domain/service"
@@ -54,7 +54,7 @@ func do() (err error) {
 
 	// サーバーを起動する {
 	flopStrtategyServer := server.NewFlopStrategyServer(flopStrtategyService)
-	router := openapi.NewRouter(flopStrtategyServer)
+	router := api.NewRouter(flopStrtategyServer)
 	return http.ListenAndServe(":8080", router)
 	// }
 }
