@@ -19,11 +19,11 @@ func (c *Client) GetPlayerPostion(
 SELECT
 	position.id,
 	position.position_type,
-	position.ipost_flop_action_order
+	position.post_flop_action_order
 FROM
-	player_position position
+	player_positions position
 WHERE
-	position_type = ?
+	position_type = $1
 `)
 
 	e := playerposition.Entity{}
@@ -32,9 +32,9 @@ WHERE
 		text,
 		position.String(),
 	).Scan(
-		e.ID,
-		e.PositionType,
-		e.PostFlopActionOrder,
+		&e.ID,
+		&e.PositionType,
+		&e.PostFlopActionOrder,
 	)
 	if err != nil {
 		return nil, err

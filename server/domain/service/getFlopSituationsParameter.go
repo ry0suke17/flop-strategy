@@ -19,10 +19,25 @@ func (s *FlopStrtategyService) GetFlopSituationsParameter(
 	boardPairedType board.PairedType,
 	boardSuitsType board.SuitsType,
 ) ([]*flopsituationlist.Entity, error) {
+	heroPosEntity, err := s.db.GetPlayerPostion(ctx, heroPosition)
+	if err != nil {
+		return nil, flserr.Wrap(err)
+	}
+	villainPosEntity, err := s.db.GetPlayerPostion(ctx, villainPosition)
+	if err != nil {
+		return nil, flserr.Wrap(err)
+	}
+	headsUp := playerposition.HeadsUp{
+		HeroPosEntity:    heroPosEntity,
+		VillainPosEntity: villainPosEntity,
+		HeroPos:          heroPosition,
+		VillainPos:       villainPosition,
+	}
+
 	list, err := s.db.ListFlopSituations(
 		ctx,
-		heroPosition,
-		villainPosition,
+		headsUp.InPosition(),
+		headsUp.OutOfPosition(),
 		potType,
 		highCard,
 		boardPairedType,
