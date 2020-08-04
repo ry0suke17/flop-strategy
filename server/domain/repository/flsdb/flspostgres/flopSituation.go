@@ -51,8 +51,13 @@ func (c *Client) ListFlopSituations(
 	highCard board.HighCard,
 	boardPairedType board.PairedType,
 	boardSuitsType board.SuitsType,
+	boardConnectType board.ConnectType,
 ) ([]*flopsituationlist.Entity, error) {
-	highCardFilterText, err := highCardFilterText(highCard)
+	highCardFilter, err := highCardFilter(highCard)
+	if err != nil {
+		return nil, flserr.Wrap(err)
+	}
+	boardConnectTypeFilter, err := boardConnectTypeFilter(boardConnectType, boardPairedType)
 	if err != nil {
 		return nil, flserr.Wrap(err)
 	}
@@ -65,7 +70,6 @@ func (c *Client) ListFlopSituations(
 		return nil, flserr.Wrap(err)
 	}
 
-	// TODO: connected とそうでないのとで分ける必要がある
 	text := fmt.Sprintf(`
 SELECT
 	param.in_position_bet_frequency,
@@ -126,10 +130,11 @@ WHERE
 		FROM
 			unnest(ARRAY[highCardSuit.value, middleCardSuit.value, lowCardSuit.value]) AS value
 	) = $5
-	AND %s
+	%s
+	%s
 LIMIT
 	%d
-`, highCardFilterText, 100)
+`, highCardFilter, boardConnectTypeFilter, 100)
 
 	q, err := c.db.QueryContext(
 		ctx,
@@ -171,26 +176,51 @@ LIMIT
 	return list, nil
 }
 
-func highCardFilterText(highCard board.HighCard) (string, error) {
+func highCardFilter(highCard board.HighCard) (string, error) {
 	switch highCard {
 	case board.HighCardA:
-		return "highCardNum.value = 14", nil
+		return "AND highCardNum.value = 14", nil
 	case board.HighCardK:
-		return "highCardNum.value = 13", nil
+		return "AND highCardNum.value = 13", nil
 	case board.HighCardQ:
-		return "highCardNum.value = 12", nil
+		return "AND highCardNum.value = 12", nil
 	case board.HighCardJ:
-		return "highCardNum.value = 11", nil
+		return "AND highCardNum.value = 11", nil
 	case board.HighCardT:
-		return "highCardNum.value = 10", nil
+		return "AND highCardNum.value = 10", nil
 	case board.HighCard8To9:
-		return "highCardNum.value BETWEEN 8 AND 9", nil
+		return "AND highCardNum.value BETWEEN 8 AND 9", nil
 	case board.HighCard5To7:
-		return "highCardNum.value BETWEEN 5 AND 7", nil
+		return "AND highCardNum.value BETWEEN 5 AND 7", nil
 	case board.HighCard2To4:
-		return "highCardNum.value BETWEEN 2 AND 4", nil
+		return "AND highCardNum.value BETWEEN 2 AND 4", nil
 	}
 	return "", flserr.Errorf("invalid highCard. highCard=%d", highCard)
+}
+
+func boardConnectTypeFilter(
+	boardConnectType board.ConnectType,
+	boardPairedType board.PairedType,
+) (string, error) {
+	switch boardConnectType {
+	case board.ConnectTypeConnected:
+		if boardPairedType == board.PairedTypeUnpaired {
+			return "AND ((highCardNum.value - middleCardNum.value) + (middleCardNum.value - lowCardNum.value)) BETWEEN 2 AND 3", nil
+		}
+		// ボードでペアになっていたりトリップスの時は必然的にコネクトにしないのでエラーを返す。 {
+		return "", flserr.Errorf(
+			"should specified unpaired when connected. boardConnectType=%d, boardPairedType=%d",
+			boardConnectType,
+			boardPairedType,
+		)
+		// }
+	case board.ConnectTypeDisconnected:
+		if boardPairedType == board.PairedTypeUnpaired {
+			return "AND ((highCardNum.value - middleCardNum.value) + (middleCardNum.value - lowCardNum.value)) NOT BETWEEN 2 AND 3", nil
+		}
+		return "", nil
+	}
+	return "", flserr.Errorf("invalid connectType. boardConnectType=%d", boardConnectType)
 }
 
 func boardPairedNumber(boardPairedType board.PairedType) (int, error) {

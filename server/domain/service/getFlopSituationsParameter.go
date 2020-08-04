@@ -18,14 +18,14 @@ func (s *FlopStrtategyService) GetFlopSituationsParameter(
 	highCard board.HighCard,
 	boardPairedType board.PairedType,
 	boardSuitsType board.SuitsType,
-) ([]*flopsituationlist.Entity, error) {
+) ([]*flopsituationlist.Entity, []*flopsituationlist.Entity, bool, error) {
 	heroPosEntity, err := s.db.GetPlayerPostion(ctx, heroPosition)
 	if err != nil {
-		return nil, flserr.Wrap(err)
+		return nil, nil, false, flserr.Wrap(err)
 	}
 	villainPosEntity, err := s.db.GetPlayerPostion(ctx, villainPosition)
 	if err != nil {
-		return nil, flserr.Wrap(err)
+		return nil, nil, false, flserr.Wrap(err)
 	}
 	headsUp := playerposition.HeadsUp{
 		HeroPosEntity:    heroPosEntity,
@@ -34,17 +34,34 @@ func (s *FlopStrtategyService) GetFlopSituationsParameter(
 		VillainPos:       villainPosition,
 	}
 
-	list, err := s.db.ListFlopSituations(
-		ctx,
-		headsUp.InPosition(),
-		headsUp.OutOfPosition(),
-		potType,
-		highCard,
-		boardPairedType,
-		boardSuitsType,
-	)
-	if err != nil {
-		return nil, flserr.Wrap(err)
+	getList := func(boardConnectType board.ConnectType) ([]*flopsituationlist.Entity, error) {
+		return s.db.ListFlopSituations(
+			ctx,
+			headsUp.InPosition(),
+			headsUp.OutOfPosition(),
+			potType,
+			highCard,
+			boardPairedType,
+			boardSuitsType,
+			boardConnectType,
+		)
 	}
-	return list, nil
+
+	disconnectedList, err := getList(board.ConnectTypeDisconnected)
+	if err != nil {
+		return nil, nil, false, flserr.Wrap(err)
+	}
+
+	// ボードでペアになっていたりトリップスの時は必然的にコネクトにしないのでその場合はリストを取得しない。 {
+	var connectedList []*flopsituationlist.Entity
+	if boardPairedType == board.PairedTypeUnpaired {
+		list, err := getList(board.ConnectTypeConnected)
+		if err != nil {
+			return nil, nil, false, flserr.Wrap(err)
+		}
+		connectedList = list
+	}
+	// }
+
+	return connectedList, disconnectedList, headsUp.IsInPositionHero(), nil
 }

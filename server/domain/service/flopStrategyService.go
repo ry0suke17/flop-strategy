@@ -19,6 +19,7 @@ type DBRepository interface {
 		highCard board.HighCard,
 		boardPairedType board.PairedType,
 		boardSuitsType board.SuitsType,
+		boardConnectType board.ConnectType,
 	) ([]*flopsituationlist.Entity, error)
 	// GetPlayerPostion はプレイヤーのポジションを取得する。
 	GetPlayerPostion(

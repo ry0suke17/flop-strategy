@@ -96,7 +96,7 @@ func (s *FlopStrategyServer) getFlopSituationsParameter(r *http.Request) (*api.G
 		return nil, flserr.Wrap(err)
 	}
 
-	list, err := s.service.GetFlopSituationsParameter(
+	connectedList, disconnectedList, isInPositionHero, err := s.service.GetFlopSituationsParameter(
 		r.Context(),
 		heroPosition,
 		villainPosition,
@@ -109,7 +109,9 @@ func (s *FlopStrategyServer) getFlopSituationsParameter(r *http.Request) (*api.G
 		return nil, flserr.Wrap(err)
 	}
 	// TODO: 平均値を計算してレスポンスを返す。
-	fmt.Println(list)
+	fmt.Println(connectedList)
+	fmt.Println(disconnectedList)
+	fmt.Println(isInPositionHero)
 	return &api.GetFlopSituationsParameterResponse{
 		IpEquity: 0.2,
 	}, nil
