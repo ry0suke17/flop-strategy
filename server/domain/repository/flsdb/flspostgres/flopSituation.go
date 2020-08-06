@@ -81,7 +81,9 @@ SELECT
 	param.in_position_67_bet_frequency,
 	param.out_of_position_67_bet_frequency,
 	param.in_position_equity,
-	param.out_of_position_equity
+	param.out_of_position_equity,
+	image.url
+	image.description
 FROM
 	flop_situations situation
 	INNER JOIN flop_situation_parameters AS param
@@ -166,6 +168,8 @@ LIMIT
 			&a.OutOfPosition67BetFrequency,
 			&a.InPositionEquity,
 			&a.OutOfPositionEquity,
+			&a.ImageURL,
+			&a.ImageDescription,
 		)
 		if err != nil {
 			return nil, flserr.Wrap(err)

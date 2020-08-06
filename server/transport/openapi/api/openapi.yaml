@@ -153,11 +153,8 @@ components:
           type: number
         hero_position_type:
           $ref: '#/components/schemas/PlayerPositionType'
-        image_urls:
-          items:
-            format: uri
-            type: string
-          type: array
+        image_url:
+          type: string
         description:
           type: string
       required:

@@ -12,4 +12,6 @@ type Entity struct {
 	OutOfPosition67BetFrequency float32
 	InPositionEquity            float32
 	OutOfPositionEquity         float32
+	ImageURL                    string
+	ImageDescription            string
 }

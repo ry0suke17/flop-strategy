@@ -80,11 +80,8 @@ components:
           format: float
         hero_position_type:
           $ref: '#/components/schemas/PlayerPositionType'
-        image_urls:
-          type: array
-          items:
-            type: string
-            format: uri
+        image_url:
+          type: string
         description:
           type: string
     PlayerPosition:
