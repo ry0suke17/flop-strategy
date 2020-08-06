@@ -40,10 +40,10 @@ paths:
         style: form
       - explode: true
         in: query
-        name: board-paired-type
+        name: board-pair-type
         required: false
         schema:
-          $ref: '#/components/schemas/BoardPairedType'
+          $ref: '#/components/schemas/BoardPairType'
         style: form
       - explode: true
         in: query
@@ -51,6 +51,13 @@ paths:
         required: false
         schema:
           $ref: '#/components/schemas/BoardSuitsType'
+        style: form
+      - explode: true
+        in: query
+        name: board-connect-type
+        required: false
+        schema:
+          $ref: '#/components/schemas/BoardConnectType'
         style: form
       responses:
         "200":
@@ -102,13 +109,13 @@ components:
       schema:
         $ref: '#/components/schemas/HighCard'
       style: form
-    BoardPairedType:
+    BoardPairType:
       explode: true
       in: query
-      name: board-paired-type
+      name: board-pair-type
       required: false
       schema:
-        $ref: '#/components/schemas/BoardPairedType'
+        $ref: '#/components/schemas/BoardPairType'
       style: form
     BoardSuitsType:
       explode: true
@@ -117,6 +124,14 @@ components:
       required: false
       schema:
         $ref: '#/components/schemas/BoardSuitsType'
+      style: form
+    BoardConnectType:
+      explode: true
+      in: query
+      name: board-connect-type
+      required: false
+      schema:
+        $ref: '#/components/schemas/BoardConnectType'
       style: form
   schemas:
     GetFlopSituationsParameterResponse:
@@ -200,17 +215,22 @@ components:
       - HighCard_5_To_7
       - HighCard_2_To_4
       type: string
-    BoardPairedType:
+    BoardPairType:
       enum:
-      - BoardPairedTypeUnpaired
-      - BoardPairedTypePaired
-      - BoardPairedTypeTrips
+      - BoardPairTypeUnpaired
+      - BoardPairTypePaired
+      - BoardPairTypeTrips
       type: string
     BoardSuitsType:
       enum:
       - BoardSuitsTypeMonoTone
       - BoardSuitsTypeTwoTone
       - BoardSuitsTypeRainbow
+      type: string
+    BoardConnectType:
+      enum:
+      - BoardConnectTypeDisconnect
+      - BoardConnectTypeConnected
       type: string
     Error:
       properties:

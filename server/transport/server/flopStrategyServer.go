@@ -1,7 +1,6 @@
 package server
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -71,48 +70,65 @@ func errorHandling(w http.ResponseWriter, err error) {
 
 func (s *FlopStrategyServer) getFlopSituationsParameter(r *http.Request) (*api.GetFlopSituationsParameterResponse, error) {
 	query := r.URL.Query()
-	heroPosition, err := openapi.PlayerPostion(api.PlayerPosition(query.Get("heroPosition")))
+	heroPosition, err := openapi.PlayerPostion(api.PlayerPosition(query.Get("hero-position")))
 	if err != nil {
 		return nil, flserr.Wrap(err)
 	}
-	villainPosition, err := openapi.PlayerPostion(api.PlayerPosition(query.Get("villainPosition")))
+	villainPosition, err := openapi.PlayerPostion(api.PlayerPosition(query.Get("villain-position")))
 	if err != nil {
 		return nil, flserr.Wrap(err)
 	}
-	potType, err := openapi.BoardPotType(api.PotType(query.Get("potType")))
+	potType, err := openapi.BoardPotType(api.PotType(query.Get("pot-type")))
 	if err != nil {
 		return nil, flserr.Wrap(err)
 	}
-	highCard, err := openapi.BoardHighCard(api.HighCard(query.Get("highCard")))
+	highCard, err := openapi.BoardHighCard(api.HighCard(query.Get("high-card")))
 	if err != nil {
 		return nil, flserr.Wrap(err)
 	}
-	boardPairedType, err := openapi.BoardPairedType(api.BoardPairedType(query.Get("boardPairedType")))
+	boardPairType, err := openapi.BoardPairType(api.BoardPairType(query.Get("board-pair-type")))
 	if err != nil {
 		return nil, flserr.Wrap(err)
 	}
-	boardSuitsType, err := openapi.BoardSuitsType(api.BoardSuitsType(query.Get("boardSuitsType")))
+	boardSuitsType, err := openapi.BoardSuitsType(api.BoardSuitsType(query.Get("board-suits-type")))
+	if err != nil {
+		return nil, flserr.Wrap(err)
+	}
+	boardConnectType, err := openapi.BoardConnectType(api.BoardConnectType(query.Get("board-connect-type")))
 	if err != nil {
 		return nil, flserr.Wrap(err)
 	}
 
-	connectedList, disconnectedList, isInPositionHero, err := s.service.GetFlopSituationsParameter(
+	list, heroPositionType, err := s.service.GetFlopSituationsParameter(
 		r.Context(),
 		heroPosition,
 		villainPosition,
 		potType,
 		highCard,
-		boardPairedType,
+		boardPairType,
 		boardSuitsType,
+		boardConnectType,
 	)
 	if err != nil {
 		return nil, flserr.Wrap(err)
 	}
-	// TODO: 平均値を計算してレスポンスを返す。
-	fmt.Println(connectedList)
-	fmt.Println(disconnectedList)
-	fmt.Println(isInPositionHero)
+
+	heroPosType, err := openapi.ToAPIPlayerPosition(heroPositionType)
+	if err != nil {
+		return nil, flserr.Wrap(err)
+	}
+
 	return &api.GetFlopSituationsParameterResponse{
-		IpEquity: 0.2,
+		IpBetFreq:        list.AvgInPositionBetFrequency(),
+		OopBetFreq:       list.AvgOutOfPositionBetFrequency(),
+		IpCheckFreq:      list.AvgInPositionCheckFrequency(),
+		OopCheckFreq:     list.AvgOutOfPositionCheckFrequency(),
+		Ip33BetFreq:      list.AvgInPosition33BetFrequency(),
+		Oop33BetFreq:     list.AvgOutOfPosition33BetFrequency(),
+		Ip67BetFreq:      list.AvgInPosition67BetFrequency(),
+		Oop67BetFreq:     list.AvgOutOfPosition67BetFrequency(),
+		IpEquity:         list.AvgInPositionEquity(),
+		OopEquity:        list.AvgOutOfPositionEquity(),
+		HeroPositionType: heroPosType,
 	}, nil
 }

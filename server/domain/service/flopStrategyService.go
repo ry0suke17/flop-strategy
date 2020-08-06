@@ -17,7 +17,7 @@ type DBRepository interface {
 		outOfPosition playerposition.Position,
 		potType board.PotType,
 		highCard board.HighCard,
-		boardPairedType board.PairedType,
+		boardPairType board.PairType,
 		boardSuitsType board.SuitsType,
 		boardConnectType board.ConnectType,
 	) ([]*flopsituationlist.Entity, error)

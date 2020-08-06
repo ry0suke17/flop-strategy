@@ -28,3 +28,11 @@ func (h *HeadsUp) OutOfPosition() Position {
 	}
 	return h.HeroPos
 }
+
+// HeroPositionType はヒーローのポジションタイプを返す。
+func (h *HeadsUp) HeroPositionType() PositionType {
+	if h.IsInPositionHero() {
+		return PositionTypeInPosition
+	}
+	return PositionTypeOutOfPosition
+}

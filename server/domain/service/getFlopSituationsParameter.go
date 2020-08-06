@@ -16,16 +16,27 @@ func (s *FlopStrtategyService) GetFlopSituationsParameter(
 	villainPosition playerposition.Position,
 	potType board.PotType,
 	highCard board.HighCard,
-	boardPairedType board.PairedType,
+	boardPairType board.PairType,
 	boardSuitsType board.SuitsType,
-) ([]*flopsituationlist.Entity, []*flopsituationlist.Entity, bool, error) {
+	boardConnectType board.ConnectType,
+) (flopsituationlist.Entities, playerposition.PositionType, error) {
+	// ボードでペアになっていたりトリップスの時は必然的にコネクトにしないのでエラーを返す。 {
+	if boardConnectType == board.ConnectTypeConnected && boardPairType != board.PairTypePaired {
+		return nil, 0, flserr.Errorf(
+			"should specified unpaired when connected. boardConnectType=%d, boardPairType=%d",
+			boardConnectType,
+			boardPairType,
+		)
+	}
+	// }
+
 	heroPosEntity, err := s.db.GetPlayerPostion(ctx, heroPosition)
 	if err != nil {
-		return nil, nil, false, flserr.Wrap(err)
+		return nil, 0, flserr.Wrap(err)
 	}
 	villainPosEntity, err := s.db.GetPlayerPostion(ctx, villainPosition)
 	if err != nil {
-		return nil, nil, false, flserr.Wrap(err)
+		return nil, 0, flserr.Wrap(err)
 	}
 	headsUp := playerposition.HeadsUp{
 		HeroPosEntity:    heroPosEntity,
@@ -34,34 +45,19 @@ func (s *FlopStrtategyService) GetFlopSituationsParameter(
 		VillainPos:       villainPosition,
 	}
 
-	getList := func(boardConnectType board.ConnectType) ([]*flopsituationlist.Entity, error) {
-		return s.db.ListFlopSituations(
-			ctx,
-			headsUp.InPosition(),
-			headsUp.OutOfPosition(),
-			potType,
-			highCard,
-			boardPairedType,
-			boardSuitsType,
-			boardConnectType,
-		)
-	}
-
-	disconnectedList, err := getList(board.ConnectTypeDisconnected)
+	list, err := s.db.ListFlopSituations(
+		ctx,
+		headsUp.InPosition(),
+		headsUp.OutOfPosition(),
+		potType,
+		highCard,
+		boardPairType,
+		boardSuitsType,
+		boardConnectType,
+	)
 	if err != nil {
-		return nil, nil, false, flserr.Wrap(err)
+		return nil, 0, flserr.Wrap(err)
 	}
 
-	// ボードでペアになっていたりトリップスの時は必然的にコネクトにしないのでその場合はリストを取得しない。 {
-	var connectedList []*flopsituationlist.Entity
-	if boardPairedType == board.PairedTypeUnpaired {
-		list, err := getList(board.ConnectTypeConnected)
-		if err != nil {
-			return nil, nil, false, flserr.Wrap(err)
-		}
-		connectedList = list
-	}
-	// }
-
-	return connectedList, disconnectedList, headsUp.IsInPositionHero(), nil
+	return list, headsUp.HeroPositionType(), nil
 }

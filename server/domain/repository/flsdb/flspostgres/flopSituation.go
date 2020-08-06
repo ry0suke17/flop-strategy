@@ -49,7 +49,7 @@ func (c *Client) ListFlopSituations(
 	outOfPosition playerposition.Position,
 	potType board.PotType,
 	highCard board.HighCard,
-	boardPairedType board.PairedType,
+	boardPairType board.PairType,
 	boardSuitsType board.SuitsType,
 	boardConnectType board.ConnectType,
 ) ([]*flopsituationlist.Entity, error) {
@@ -57,11 +57,11 @@ func (c *Client) ListFlopSituations(
 	if err != nil {
 		return nil, flserr.Wrap(err)
 	}
-	boardConnectTypeFilter, err := boardConnectTypeFilter(boardConnectType, boardPairedType)
+	boardConnectTypeFilter, err := boardConnectTypeFilter(boardConnectType, boardPairType)
 	if err != nil {
 		return nil, flserr.Wrap(err)
 	}
-	boardPairedNumber, err := boardPairedNumber(boardPairedType)
+	boardPairedNumber, err := boardPairedNumber(boardPairType)
 	if err != nil {
 		return nil, flserr.Wrap(err)
 	}
@@ -204,22 +204,22 @@ func highCardFilter(highCard board.HighCard) (string, error) {
 
 func boardConnectTypeFilter(
 	boardConnectType board.ConnectType,
-	boardPairedType board.PairedType,
+	boardPairType board.PairType,
 ) (string, error) {
 	switch boardConnectType {
 	case board.ConnectTypeConnected:
-		if boardPairedType == board.PairedTypeUnpaired {
+		if boardPairType == board.PairTypeUnpaired {
 			return "AND ((highCardNum.value - middleCardNum.value) + (middleCardNum.value - lowCardNum.value)) BETWEEN 2 AND 3", nil
 		}
-		// ボードでペアになっていたりトリップスの時は必然的にコネクトにしないのでエラーを返す。 {
+		// ボードでペアになっていたりトリップスの時は必然的にコネクトにしないのでエラーを返す。 （念の為ここでもエラーにしておく。）{
 		return "", flserr.Errorf(
-			"should specified unpaired when connected. boardConnectType=%d, boardPairedType=%d",
+			"should specified unpaired when connected. boardConnectType=%d, boardPairType=%d",
 			boardConnectType,
-			boardPairedType,
+			boardPairType,
 		)
 		// }
 	case board.ConnectTypeDisconnected:
-		if boardPairedType == board.PairedTypeUnpaired {
+		if boardPairType == board.PairTypeUnpaired {
 			return "AND ((highCardNum.value - middleCardNum.value) + (middleCardNum.value - lowCardNum.value)) NOT BETWEEN 2 AND 3", nil
 		}
 		return "", nil
@@ -227,16 +227,16 @@ func boardConnectTypeFilter(
 	return "", flserr.Errorf("invalid connectType. boardConnectType=%d", boardConnectType)
 }
 
-func boardPairedNumber(boardPairedType board.PairedType) (int, error) {
-	switch boardPairedType {
-	case board.PairedTypeUnpaired:
+func boardPairedNumber(boardPairType board.PairType) (int, error) {
+	switch boardPairType {
+	case board.PairTypeUnpaired:
 		return 3, nil
-	case board.PairedTypePaired:
+	case board.PairTypePaired:
 		return 2, nil
-	case board.PairedTypeTrips:
+	case board.PairTypeTrips:
 		return 1, nil
 	}
-	return 0, flserr.Errorf("invalid boardPairedType. boardPairedType=%d", boardPairedType)
+	return 0, flserr.Errorf("invalid boardPairType. boardPairType=%d", boardPairType)
 }
 
 func boardSuitsNumber(boardSuitsType board.SuitsType) (int, error) {
