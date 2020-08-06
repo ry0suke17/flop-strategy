@@ -17,8 +17,9 @@ paths:
         - $ref: '#/components/parameters/VillainPosition'
         - $ref: '#/components/parameters/PotType'
         - $ref: '#/components/parameters/HighCard'
-        - $ref: '#/components/parameters/BoardPairedType'
+        - $ref: '#/components/parameters/BoardPairType'
         - $ref: '#/components/parameters/BoardSuitsType'
+        - $ref: '#/components/parameters/BoardConnectType'
       responses:
         '200':
           description: Parameter for flop situations
@@ -80,56 +81,70 @@ components:
           format: float
         hero_position_type:
           $ref: '#/components/schemas/PlayerPositionType'
-        image_urls:
+        images:
           type: array
           items:
-            type: string
-            format: uri
-        description:
-          type: string
+            type: object
+            required:
+              - name
+              - url
+              - description
+            properties:
+              url:
+                type: string
+                format: uri
+              name:
+                type: string
+              description:
+                type: string
     PlayerPosition:
       type: string
       enum:
-        - SB
-        - BB
-        - UTG
-        - HJ
-        - CO
-        - BTN
+        - PlayerPositionSB
+        - PlayerPositionBB
+        - PlayerPositionUTG
+        - PlayerPositionHJ
+        - PlayerPositionCO
+        - PlayerPositionBTN
     PlayerPositionType:
       type: string
       enum:
-        - IN_POSITION
-        - OUT_OF_POSITION
+        - PlayerPositionTypeInPosition
+        - PlayerPositionTypeOutOfPosition
     PotType:
       type: string
       enum:
-        - SRP
-        - 3BET
-        - 4BET
+        - PotTypeSRP
+        - PotType_3_Bet
+        - PotType_4_Bet
     HighCard:
       type: string
       enum:
-        - A
-        - K
-        - Q
-        - J
-        - T
-        - 8_to_9
-        - 5_to_7
-        - 2_to_4
-    BoardPairedType:
+        - HighCardA
+        - HighCardK
+        - HighCardQ
+        - HighCardJ
+        - HighCardT
+        - HighCard_8_To_9
+        - HighCard_5_To_7
+        - HighCard_2_To_4
+    BoardPairType:
       type: string
       enum:
-        - UNPAIRED
-        - PAIRED
-        - TRIPS
+        - BoardPairTypeUnpaired
+        - BoardPairTypePaired
+        - BoardPairTypeTrips
     BoardSuitsType:
       type: string
       enum:
-        - MONO_TONE
-        - TWO_TONE
-        - RAINBOW
+        - BoardSuitsTypeMonoTone
+        - BoardSuitsTypeTwoTone
+        - BoardSuitsTypeRainbow
+    BoardConnectType:
+      type: string
+      enum:
+        - BoardConnectTypeDisconnect
+        - BoardConnectTypeConnected
     Error:
       properties:
         code:
@@ -139,7 +154,7 @@ components:
 
             * `INVALID_ARGUMENT` - The arguments is invalid
           enum:
-            - INVALID_ARGUMENT
+            - CodeInvalidArgument
         message:
           description: A developer-facing error message.
           type: string
@@ -167,13 +182,18 @@ components:
       in: query
       schema:
         $ref: '#/components/schemas/HighCard'
-    BoardPairedType:
-      name: board-paired-type
+    BoardPairType:
+      name: board-pair-type
       in: query
       schema:
-        $ref: '#/components/schemas/BoardPairedType'
+        $ref: '#/components/schemas/BoardPairType'
     BoardSuitsType:
       name: board-suits-type
       in: query
       schema:
         $ref: '#/components/schemas/BoardSuitsType'
+    BoardConnectType:
+      name: board-connect-type
+      in: query
+      schema:
+        $ref: '#/components/schemas/BoardConnectType'
