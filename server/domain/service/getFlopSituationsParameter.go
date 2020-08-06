@@ -21,7 +21,7 @@ func (s *FlopStrtategyService) GetFlopSituationsParameter(
 	boardConnectType board.ConnectType,
 ) (flopsituationlist.Entities, playerposition.PositionType, error) {
 	// ボードでペアになっていたりトリップスの時は必然的にコネクトにしないのでエラーを返す。 {
-	if boardConnectType == board.ConnectTypeConnected && boardPairType != board.PairTypePaired {
+	if boardConnectType == board.ConnectTypeConnected && boardPairType != board.PairTypeUnpaired {
 		return nil, 0, flserr.Errorf(
 			"should specified unpaired when connected. boardConnectType=%d, boardPairType=%d",
 			boardConnectType,

@@ -32,7 +32,5 @@ type GetFlopSituationsParameterResponse struct {
 
 	HeroPositionType PlayerPositionType `json:"hero_position_type"`
 
-	ImageUrl string `json:"image_url,omitempty"`
-
-	Description string `json:"description,omitempty"`
+	Images []GetFlopSituationsParameterResponseImages `json:"images,omitempty"`
 }

@@ -13,6 +13,7 @@ type Entity struct {
 	InPositionEquity            float32
 	OutOfPositionEquity         float32
 	ImageURL                    string
+	ImageName                   string
 	ImageDescription            string
 }
 
@@ -21,6 +22,9 @@ type Entities []*Entity
 
 func (es Entities) avg(values []float32) float32 {
 	total := float32(0.0)
+	if len(values) == 0 {
+		return total
+	}
 	for _, v := range values {
 		total += v
 	}
@@ -115,4 +119,20 @@ func (es Entities) AvgOutOfPositionEquity() float32 {
 		values = append(values, e.OutOfPositionEquity)
 	}
 	return es.avg(values)
+}
+
+// Images は画像のリストを返す。
+func (es Entities) Images() []Image {
+	var images []Image
+	for _, e := range es {
+		if e.ImageURL == "" {
+			continue
+		}
+		images = append(images, Image{
+			URL:         e.ImageURL,
+			Name:        e.ImageName,
+			Description: e.ImageDescription,
+		})
+	}
+	return images
 }

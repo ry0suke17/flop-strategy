@@ -82,7 +82,10 @@ SELECT
 	param.out_of_position_67_bet_frequency,
 	param.in_position_equity,
 	param.out_of_position_equity,
-	image.url
+	image.url,
+	highCardNum.display_name || highCardSuit.display_name ||
+		middleCardNum.display_name || middleCardSuit.display_name ||
+		lowCardNum.display_name || lowCardSuit.display_name AS imageName,
 	image.description
 FROM
 	flop_situations situation
@@ -169,6 +172,7 @@ LIMIT
 			&a.InPositionEquity,
 			&a.OutOfPositionEquity,
 			&a.ImageURL,
+			&a.ImageName,
 			&a.ImageDescription,
 		)
 		if err != nil {

@@ -61,6 +61,8 @@ func errorHandling(w http.ResponseWriter, err error) {
 		Message:          err.Error(),
 		LocalizedMessage: "",
 	}
+	log.Printf("got error. err=%v\n", respErr)
+
 	encodeErr := api.EncodeJSONResponse(respErr, &status, w)
 	if encodeErr != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -118,6 +120,15 @@ func (s *FlopStrategyServer) getFlopSituationsParameter(r *http.Request) (*api.G
 		return nil, flserr.Wrap(err)
 	}
 
+	var images []api.GetFlopSituationsParameterResponseImages
+	for _, v := range list.Images() {
+		images = append(images, api.GetFlopSituationsParameterResponseImages{
+			Url:         v.URL,
+			Name:        v.Name,
+			Description: v.Description,
+		})
+	}
+
 	return &api.GetFlopSituationsParameterResponse{
 		IpBetFreq:        list.AvgInPositionBetFrequency(),
 		OopBetFreq:       list.AvgOutOfPositionBetFrequency(),
@@ -130,5 +141,6 @@ func (s *FlopStrategyServer) getFlopSituationsParameter(r *http.Request) (*api.G
 		IpEquity:         list.AvgInPositionEquity(),
 		OopEquity:        list.AvgOutOfPositionEquity(),
 		HeroPositionType: heroPosType,
+		Images:           images,
 	}, nil
 }

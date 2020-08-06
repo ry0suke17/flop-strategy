@@ -168,10 +168,10 @@ components:
           type: number
         hero_position_type:
           $ref: '#/components/schemas/PlayerPositionType'
-        image_url:
-          type: string
-        description:
-          type: string
+        images:
+          items:
+            $ref: '#/components/schemas/GetFlopSituationsParameterResponse_images'
+          type: array
       required:
       - hero_position_type
       - ip_33_bet_freq
@@ -248,3 +248,16 @@ components:
         localized_message:
           description: A user-friendly error message.
           type: string
+    GetFlopSituationsParameterResponse_images:
+      properties:
+        url:
+          format: uri
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+      required:
+      - description
+      - name
+      - url
