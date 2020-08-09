@@ -1,0 +1,29 @@
+{
+  "name": "client",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "genapi": "npx @openapitools/openapi-generator-cli generate -g typescript-fetch -i ../api/flopStrategy.yaml -o ./fls-api-client --additional-properties=typescriptThreePlus=true,npmName=fls-api-client,prefixParameterInterfaces=true"
+  },
+  "dependencies": {
+    "@material-ui/core": "^4.11.0",
+    "btoa": "^1.2.1",
+    "form-data": "^3.0.0",
+    "install": "^0.13.0",
+    "isomorphic-unfetch": "^3.0.0",
+    "next": "9.5.1",
+    "npm": "^6.14.7",
+    "react": "16.13.1",
+    "react-dom": "16.13.1"
+  },
+  "devDependencies": {
+    "@types/node": "^14.0.27",
+    "@types/react": "^16.9.45",
+    "@zeit/next-source-maps": "0.0.3",
+    "dotenv": "^8.2.0",
+    "typescript": "^3.9.7"
+  }
+}
