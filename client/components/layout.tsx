@@ -1,7 +1,7 @@
 import Head from 'next/head';
-import theme from '@fls-lib/material-ui/theme';
+import { theme } from '@fls-lib/material-ui/theme';
 
-export const Layout = ({
+const Layout = ({
   children,
   className,
   title = 'This is the default title',
@@ -26,3 +26,5 @@ export const Layout = ({
     </div>
   );
 };
+
+export default Layout;
