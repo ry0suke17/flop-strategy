@@ -17,7 +17,8 @@
     "paths": {
       "@fls-lib/*": ["lib/*"],
       "@fls-api-client/*": ["fls-api-client/*"],
-      "@fls-pages/*": ["pages/*"]
+      "@fls-pages/*": ["pages/*"],
+      "@fls-components/*": ["components/*"]
     }
   },
   "exclude": ["node_modules"],

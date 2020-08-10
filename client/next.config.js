@@ -16,6 +16,10 @@ module.exports = withSourceMaps({
       'fls-api-clinet',
     );
     config.resolve.alias['@fls-pages'] = path.join(__dirname, 'pages');
+    config.resolve.alias['@fls-components'] = path.join(
+      __dirname,
+      'components',
+    );
 
     return config;
   },
