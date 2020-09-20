@@ -213,10 +213,10 @@ const Board: Page<Props> = (props: Props) => {
   const classes = useStyles({});
 
   return (
-    <Layout className={classes.root} title="ボード">
+    <Layout className={classes.root} title="Board situation">
       <Container className={classes.main} component="main" maxWidth="md">
-        <Box my={1}>
-          <Typography>Board situation</Typography>
+        <Box my={2}>
+          <Typography variant="h4">Board situation</Typography>
         </Box>
 
         <Box my={1}>

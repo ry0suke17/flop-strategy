@@ -12,8 +12,9 @@ import {
   Paper,
   Typography,
   Grid,
+  Box,
 } from '@material-ui/core';
-import { makeStyles, createStyles } from '@material-ui/core/styles';
+import { makeStyles, createStyles, withStyles } from '@material-ui/core/styles';
 import {
   PlayerPosition,
   PotType,
@@ -40,6 +41,15 @@ type Props = {
   connectedResp?: GetFlopSituationsParameterResponse;
 };
 
+const CustomTableCell = withStyles((theme) => ({
+  root: {
+    border: '1px solid rgba(224, 224, 224, 1)',
+  },
+  body: {
+    border: '1px solid rgba(224, 224, 224, 1)',
+  },
+}))(TableCell);
+
 const ParameterTable = ({
   resp,
 }: {
@@ -50,46 +60,46 @@ const ParameterTable = ({
       <Table aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>IP Bet Freq</TableCell>
-            <TableCell>IP Check Freq</TableCell>
-            <TableCell>IP 33% Bet Freq</TableCell>
-            <TableCell>IP 67% Bet Freq</TableCell>
-            <TableCell>IP Most Common Size</TableCell>
-            <TableCell>IP Equity</TableCell>
-            <TableCell>OOP Bet Freq</TableCell>
-            <TableCell>OOP Check Freq</TableCell>
-            <TableCell>OOP 33% Bet Freq</TableCell>
-            <TableCell>OOP 67% Bet Freq</TableCell>
-            <TableCell>OOP Most Common Size</TableCell>
-            <TableCell>OOP Equity</TableCell>
+            <CustomTableCell>IP Bet Freq</CustomTableCell>
+            <CustomTableCell>IP Check Freq</CustomTableCell>
+            <CustomTableCell>IP 33% Bet Freq</CustomTableCell>
+            <CustomTableCell>IP 67% Bet Freq</CustomTableCell>
+            <CustomTableCell>IP Most Common Size</CustomTableCell>
+            <CustomTableCell>IP Equity</CustomTableCell>
+            <CustomTableCell>OOP Bet Freq</CustomTableCell>
+            <CustomTableCell>OOP Check Freq</CustomTableCell>
+            <CustomTableCell>OOP 33% Bet Freq</CustomTableCell>
+            <CustomTableCell>OOP 67% Bet Freq</CustomTableCell>
+            <CustomTableCell>OOP Most Common Size</CustomTableCell>
+            <CustomTableCell>OOP Equity</CustomTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           <TableRow>
-            <TableCell>{resp.ipBetFreq}</TableCell>
-            <TableCell>{resp.ipCheckFreq}</TableCell>
-            <TableCell>{resp.ip33BetFreq}</TableCell>
-            <TableCell>{resp.ip67BetFreq}</TableCell>
-            <TableCell>
+            <CustomTableCell>{resp.ipBetFreq}</CustomTableCell>
+            <CustomTableCell>{resp.ipCheckFreq}</CustomTableCell>
+            <CustomTableCell>{resp.ip33BetFreq}</CustomTableCell>
+            <CustomTableCell>{resp.ip67BetFreq}</CustomTableCell>
+            <CustomTableCell>
               {resp.ip33BetFreq === resp.ip67BetFreq
                 ? '-'
                 : resp.ip33BetFreq > resp.ip67BetFreq
                 ? '33%'
                 : '67%'}
-            </TableCell>
-            <TableCell>{resp.ipEquity}</TableCell>
-            <TableCell>{resp.oopBetFreq}</TableCell>
-            <TableCell>{resp.oopCheckFreq}</TableCell>
-            <TableCell>{resp.oop33BetFreq}</TableCell>
-            <TableCell>{resp.oop67BetFreq}</TableCell>
-            <TableCell>
+            </CustomTableCell>
+            <CustomTableCell>{resp.ipEquity}</CustomTableCell>
+            <CustomTableCell>{resp.oopBetFreq}</CustomTableCell>
+            <CustomTableCell>{resp.oopCheckFreq}</CustomTableCell>
+            <CustomTableCell>{resp.oop33BetFreq}</CustomTableCell>
+            <CustomTableCell>{resp.oop67BetFreq}</CustomTableCell>
+            <CustomTableCell>
               {resp.oop33BetFreq === resp.oop67BetFreq
                 ? '-'
                 : resp.oop33BetFreq > resp.oop67BetFreq
                 ? '33%'
                 : '67%'}
-            </TableCell>
-            <TableCell>{resp.oopEquity}</TableCell>
+            </CustomTableCell>
+            <CustomTableCell>{resp.oopEquity}</CustomTableCell>
           </TableRow>
         </TableBody>
       </Table>
@@ -103,13 +113,17 @@ const Images = ({
   images: GetFlopSituationsParameterResponseImages[];
 }) => {
   return (
-    <Grid container>
+    <Grid container spacing={2}>
       {images.map((image) => {
         return (
-          <Grid item sm={4}>
+          <Grid key={image.name} item md={4}>
+            <Box my={0.5} textAlign="center">
+              <Typography>{image.name}</Typography>
+            </Box>
             <img src={image.url} width="100%" />
-            <Typography variant="subtitle1">{image.name}</Typography>
-            <Typography variant="subtitle1">{image.description}</Typography>
+            <Box my={0.5}>
+              <Typography>{image.description}</Typography>
+            </Box>
           </Grid>
         );
       })}
@@ -120,38 +134,46 @@ const Images = ({
 const Parameter: Page<Props> = ({ disconnectedResp, connectedResp }: Props) => {
   const classes = useStyles({});
   return (
-    <Layout className={classes.root} title="パラメータ">
+    <Layout className={classes.root} title="Flop parameter">
       <Container className={classes.main} component="main">
-        <Typography>パラメータ画面（仮）</Typography>
-        <Typography variant="h3">Your Position Type</Typography>
+        <Box my={2}>
+          <Typography variant="h4">Flop parameter</Typography>
+        </Box>
+
         <Typography>
-          あなたのポジションは
-          {playerPositionTypeToString(disconnectedResp.heroPositionType)}
-          になります。
-        </Typography>
-        <Typography>
-          {playerPositionTypeToString(disconnectedResp.heroPositionType)}
-          の項目を確認してください。
+          Your position is
+          {playerPositionTypeToString(disconnectedResp.heroPositionType)}.
         </Typography>
 
-        <Typography variant="h3">Disconnected Parameter</Typography>
+        <Box my={2}>
+          <Typography variant="h4">Disconnected</Typography>
+        </Box>
+
         <ParameterTable resp={disconnectedResp} />
 
-        {disconnectedResp.images ? (
-          <Images images={disconnectedResp.images} />
-        ) : (
-          <Typography variant="subtitle1">画像はありません</Typography>
-        )}
+        <Box my={2}>
+          {disconnectedResp.images ? (
+            <Images images={disconnectedResp.images} />
+          ) : (
+            <Typography variant="subtitle1">none images.</Typography>
+          )}
+        </Box>
 
         {connectedResp ? (
           <Fragment>
-            <Typography variant="h3">Connected Parameter</Typography>
+            <Box my={2}>
+              <Typography variant="h4">Connected</Typography>
+            </Box>
+
             <ParameterTable resp={connectedResp} />
-            {connectedResp.images ? (
-              <Images images={connectedResp.images} />
-            ) : (
-              <Typography variant="subtitle1">画像はありません</Typography>
-            )}
+
+            <Box my={2}>
+              {connectedResp.images ? (
+                <Images images={connectedResp.images} />
+              ) : (
+                <Typography variant="subtitle1">none images.</Typography>
+              )}
+            </Box>
           </Fragment>
         ) : (
           ''
