@@ -3,8 +3,9 @@ import { CssBaseline } from '@material-ui/core';
 import { ThemeProvider } from '@material-ui/core/styles';
 import { theme } from '@fls-lib/material-ui';
 import { Logger } from '@fls-lib/logger';
-import { NextPage, NextComponentType, NextPageContext } from 'next';
+import { NextPage, NextPageContext } from 'next';
 import Progress from '@fls-components/progress';
+import withError from '@fls-components/with-error';
 
 Logger.init();
 
@@ -41,4 +42,4 @@ class MyApp extends App {
   }
 }
 
-export default MyApp;
+export default withError()(MyApp);

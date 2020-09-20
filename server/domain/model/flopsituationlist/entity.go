@@ -1,5 +1,9 @@
 package flopsituationlist
 
+import (
+	"database/sql"
+)
+
 // Entity はフロップシチュエーションのリストの要素を表す。
 type Entity struct {
 	InPositionBetFrequency      float32
@@ -12,9 +16,9 @@ type Entity struct {
 	OutOfPosition67BetFrequency float32
 	InPositionEquity            float32
 	OutOfPositionEquity         float32
-	ImageURL                    string
-	ImageName                   string
-	ImageDescription            string
+	ImageURL                    sql.NullString
+	ImageName                   sql.NullString
+	ImageDescription            sql.NullString
 }
 
 // Entities は Entity のリストを表す。
@@ -125,13 +129,13 @@ func (es Entities) AvgOutOfPositionEquity() float32 {
 func (es Entities) Images() []Image {
 	var images []Image
 	for _, e := range es {
-		if e.ImageURL == "" {
+		if !e.ImageURL.Valid {
 			continue
 		}
 		images = append(images, Image{
-			URL:         e.ImageURL,
-			Name:        e.ImageName,
-			Description: e.ImageDescription,
+			URL:         e.ImageURL.String,
+			Name:        e.ImageName.String,
+			Description: e.ImageDescription.String,
 		})
 	}
 	return images

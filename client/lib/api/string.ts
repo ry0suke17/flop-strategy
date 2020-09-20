@@ -8,18 +8,18 @@ import {
 export const playerPositionTypeToString = (type: PlayerPositionType) => {
   switch (type) {
     case PlayerPositionType.PlayerPositionTypeInPosition:
-      return 'インポジション';
+      return 'in position';
     case PlayerPositionType.PlayerPositionTypeOutOfPosition:
-      return 'アウトオブポジション';
+      return 'out of position';
   }
 };
 
 export const boardPairTypeToString = (type: BoardPairType) => {
   switch (type) {
     case BoardPairType.BoardPairTypeUnpaired:
-      return 'Unpaired';
+      return 'unpaired';
     case BoardPairType.BoardPairTypePaired:
-      return 'Paired';
+      return 'paired';
     case BoardPairType.BoardPairTypeTrips:
       return 'trips';
   }
