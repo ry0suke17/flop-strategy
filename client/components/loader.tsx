@@ -1,4 +1,4 @@
-import { makeStyles, createStyles } from '@material-ui/styles';
+import { makeStyles, createStyles } from '@material-ui/core/styles';
 import { Fragment } from 'react';
 import { CircularProgress, Theme } from '@material-ui/core';
 

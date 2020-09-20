@@ -1,6 +1,6 @@
 import Layout from '@fls-components/layout';
 import { Theme, Container, Typography, Button } from '@material-ui/core';
-import { makeStyles, createStyles } from '@material-ui/styles';
+import { makeStyles, createStyles } from '@material-ui/core/styles';
 import { useRouter } from 'next/router';
 import { PlayerPosition, PotType } from '@fls-api-client/src';
 
