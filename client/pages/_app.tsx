@@ -1,6 +1,6 @@
 import App from 'next/app';
 import { CssBaseline } from '@material-ui/core';
-import { ThemeProvider } from '@material-ui/styles';
+import { ThemeProvider } from '@material-ui/core/styles';
 import { theme } from '@fls-lib/material-ui';
 import { Logger } from '@fls-lib/logger';
 import { NextPage, NextComponentType, NextPageContext } from 'next';
