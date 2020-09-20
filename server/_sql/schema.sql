@@ -261,7 +261,7 @@ CREATE TABLE flop_situation_parameters (
 );
 
 -- flop_situation_images はフロップシチュエーションの画像を表す。
--- cardinality: flop_situations-flop_situation_images=1-1
+-- cardinality: flop_situations-flop_situation_images=0-1
 CREATE TABLE flop_situation_images (
   -- flop_situation_id はフロップシチュエーションの ID を表す。
   flop_situation_id uuid NOT NULL,
