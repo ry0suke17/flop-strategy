@@ -60,7 +60,14 @@ func do() (err error) {
 	// サーバーを起動する {
 	flopStrtategyServer := server.NewFlopStrategyServer(flopStrtategyService)
 	router := api.NewRouter(flopStrtategyServer)
-	return http.ListenAndServe(":8080", router)
+	// The web process must listen for HTTP traffic on $PORT
+	// https://devcenter.heroku.com/articles/container-registry-and-runtime#dockerfile-commands-and-runtime {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	// }
+	return http.ListenAndServe(":"+port, router)
 	// }
 }
 
