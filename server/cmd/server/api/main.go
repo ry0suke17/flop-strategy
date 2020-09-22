@@ -14,6 +14,7 @@ import (
 
 	"github.com/yneee/flop-strategy/domain/repository/flsdb/flspostgres"
 	"github.com/yneee/flop-strategy/infra/flserr"
+	"github.com/yneee/flop-strategy/infra/flsflag"
 )
 
 var (
@@ -23,8 +24,12 @@ var (
 	postgresConnMaxLifetime = flag.Duration("postgres_conn_max_lifetime", 60*time.Second, "PostgreSQL への接続が再利用される最大時間を表す")
 )
 
+func flagParse() {
+	flsflag.Parse("FLS", "_")
+}
+
 func do() (err error) {
-	flag.Parse()
+	flagParse()
 
 	// 依存をセットアップする {
 	db, err := flspostgres.NewClient(
