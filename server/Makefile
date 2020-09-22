@@ -117,7 +117,7 @@ test/lint:
 deploy/heroku:
 	  heroku container:push --recursive --context-path .
 	  heroku container:release web
-	  heroku config:set FLS_DATABASE_URL=`heroku config:get DATABASE_URL`
+	  heroku config:set FLS_POSTGRES_DATABASE_URL=`heroku config:get DATABASE_URL`
 	  
 # ------------------------------------------------------------------
 # ------------------------------------------------------------------
