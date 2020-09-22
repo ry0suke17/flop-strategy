@@ -12,12 +12,12 @@ type Client struct {
 
 // NewClient は新しい Client を生成する。
 func NewClient(
-	dataSourceName string,
+	databaseURL string,
 	maxOpenConns int,
 	maxIdleConns int,
 	connMaxLifetime time.Duration,
 ) (*Client, error) {
-	db, err := sql.Open("postgres", dataSourceName)
+	db, err := sql.Open("postgres", databaseURL)
 	if err != nil {
 		return nil, err
 	}
