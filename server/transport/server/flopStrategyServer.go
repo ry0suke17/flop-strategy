@@ -39,6 +39,10 @@ func (s *FlopStrategyServer) Routes() api.Routes {
 
 // GetFlopSituationsParameter はフロップシチュエーションのパラメータを取得する
 func (s *FlopStrategyServer) GetFlopSituationsParameter(w http.ResponseWriter, r *http.Request) {
+	// TODO: middleware などを作成して共通で付与できるようにした方が良さそう。
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "*")
+
 	resp, err := s.getFlopSituationsParameter(r)
 	if err != nil {
 		errorHandling(w, err)
