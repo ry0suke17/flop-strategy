@@ -5,3 +5,5 @@ build:
     FLS_POSTGRES_DATABASE_URL: $DATABASE_URL
 release:
   image: web
+  command:
+    - export FLS_POSTGRES_DATABASE_URL=$DATABASE_URL
