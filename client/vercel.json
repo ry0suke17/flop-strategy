@@ -1,7 +1,7 @@
 {
   "build": {
     "env": {
-      "BASE_PATH": "https://flop-strategy.herokuapp.com/"
+      "BASE_PATH": "https://flop-strategy.herokuapp.com"
     }
   },
   "regions": ["hnd1"]

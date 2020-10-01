@@ -1,7 +1,5 @@
 build:
   docker:
     web: server/Dockerfile
-  config:
-    FLS_POSTGRES_DATABASE_URL: $DATABASE_URL
-release:
-  image: web
+run:
+  web: api -postgres_database_url "$DATABASE_URL"
