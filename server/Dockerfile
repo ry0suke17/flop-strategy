@@ -6,6 +6,5 @@ WORKDIR /go/src/github.com/yneee/flop-strategy
 RUN go build -o api-binary cmd/server/api/main.go
 
 FROM alpine:3.10
-RUN apk --no-cache add ca-certificates tzdata curl
+RUN apk --no-cache add curl
 COPY --from=builder /go/src/github.com/yneee/flop-strategy/api-binary /usr/local/bin/api
-CMD ["api"]
