@@ -141,7 +141,7 @@ const Parameter: Page<Props> = ({ disconnectedResp, connectedResp }: Props) => {
         </Box>
 
         <Typography>
-          Your position is
+          Your position is{' '}
           {playerPositionTypeToString(disconnectedResp.heroPositionType)}.
         </Typography>
 
