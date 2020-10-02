@@ -9,6 +9,15 @@ module.exports = withSourceMaps({
   env: {
     BASE_PATH: process.env.BASE_PATH || 'http://localhost:8080',
   },
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/flop/situation/position',
+        permanent: true,
+      },
+    ];
+  },
   webpack: (config, options) => {
     config.resolve.alias['@fls-lib'] = path.join(__dirname, 'lib');
     config.resolve.alias['@fls-api-clinet'] = path.join(
