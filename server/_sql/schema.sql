@@ -178,7 +178,7 @@ CREATE TABLE heads_up_situations (
   -- updated_at は更新時刻を表す。
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   PRIMARY KEY (id),
-  UNIQUE (in_position_id, out_of_position_id),
+  UNIQUE (in_position_id, out_of_position_id, pot_type),
   FOREIGN KEY (in_position_id) REFERENCES player_positions(id),
   FOREIGN KEY (out_of_position_id) REFERENCES player_positions(id)
 );
